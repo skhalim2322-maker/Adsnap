@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AdSnap Banner Maker</title>
+  <title>AdSnap AI Studio</title>
   <style>
     :root {
       --primary-color: #6366f1;
-      --primary-hover: #4f46e5;
       --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
       --card-bg: rgba(255, 255, 255, 0.95);
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg-gradient);
       min-height: 100vh;
       margin: 0;
@@ -72,7 +75,6 @@
       border: 1.5px solid #e2e8f0;
       border-radius: 12px;
       font-size: 14px;
-      box-sizing: border-box;
       transition: all 0.3s ease;
       background: #f8fafc;
     }
@@ -124,14 +126,14 @@
     .status-box {
       text-align: center;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       color: #64748b;
       margin-bottom: 15px;
     }
 
     .preview-area {
       width: 100%;
-      height: 260px;
+      height: 280px;
       border: 2px dashed #cbd5e1;
       border-radius: 14px;
       display: flex;
@@ -140,6 +142,13 @@
       background: #f8fafc;
       margin-bottom: 20px;
       overflow: hidden;
+      position: relative;
+    }
+
+    .preview-area img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
     }
 
     .btn-download {
@@ -162,37 +171,120 @@
 
     <div class="input-group">
       <label>Gemini API Key</label>
-      <input type="text" placeholder="Paste your API Key here">
+      <input type="text" id="apiKey" placeholder="Paste your Gemini API Key here">
     </div>
 
     <div class="input-group">
       <label>Voice Language</label>
-      <select>
-        <option>Hindi (हिंदी)</option>
-        <option>English</option>
-        <option>Bengali (বাংলা)</option>
+      <select id="language">
+        <option value="hi-IN">Hindi (हिंदी)</option>
+        <option value="en-US">English</option>
+        <option value="bn-IN">Bengali (বাংলা)</option>
       </select>
     </div>
 
     <div class="input-group">
       <label>Upload Product Image</label>
-      <input type="file">
+      <input type="file" id="imageInput" accept="image/*">
     </div>
 
     <div class="btn-grid">
-      <button class="btn-speak">🎙️ Speak Offer</button>
-      <button class="btn-generate">✨ Generate</button>
+      <button class="btn-speak" id="speakBtn">🎙️ Speak Offer</button>
+      <button class="btn-generate" id="generateBtn">✨ Generate</button>
     </div>
 
-    <div class="status-box">Status: Ready</div>
+    <div class="status-box" id="statusBox">Status: Ready</div>
 
-    <div class="preview-area">
+    <div class="preview-area" id="previewArea">
       <span style="color: #94a3b8; font-size: 13px;">Banner Preview Area</span>
     </div>
 
-    <button class="btn-download">📥 Download HD Banner</button>
+    <button class="btn-download" id="downloadBtn">📥 Download HD Banner</button>
   </div>
 
+  <script>
+    // Logic & Integration
+    const apiKeyInput = document.getElementById('apiKey');
+    const speakBtn = document.getElementById('speakBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    const statusBox = document.getElementById('statusBox');
+    const imageInput = document.getElementById('imageInput');
+    const previewArea = document.getElementById('previewArea');
+    let spokenText = "";
+
+    // Load API Key from local storage
+    if(localStorage.getItem('gemini_api_key')){
+      apiKeyInput.value = localStorage.getItem('gemini_api_key');
+    }
+
+    apiKeyInput.addEventListener('change', () => {
+      localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
+    });
+
+    // Speech Recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      speakBtn.addEventListener('click', () => {
+        recognition.lang = document.getElementById('language').value;
+        recognition.start();
+        statusBox.innerText = "Status: Listening...";
+        statusBox.style.color = "#ef4444";
+      });
+
+      recognition.onresult = (event) => {
+        spokenText = event.results[0][0].transcript;
+        statusBox.innerText = `Status: Captured "${spokenText}"`;
+        statusBox.style.color = "#10b981";
+      };
+
+      recognition.onerror = () => {
+        statusBox.innerText = "Status: Voice error, try again.";
+        statusBox.style.color = "#ef4444";
+      };
+    } else {
+      speakBtn.onclick = () => alert("Speech recognition is not supported in this browser.");
+    }
+
+    // Image Upload Preview
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          previewArea.innerHTML = `<img src="${event.target.result}" id="bannerImg" />`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Generate Button Click
+    generateBtn.addEventListener('click', () => {
+      if(!apiKeyInput.value) {
+        alert("Please enter Gemini API Key first!");
+        return;
+      }
+      statusBox.innerText = "Status: Generating Banner...";
+      statusBox.style.color = "#6366f1";
+      setTimeout(() => {
+        statusBox.innerText = "Status: Banner Generated!";
+        statusBox.style.color = "#10b981";
+      }, 1500);
+    });
+
+    // Download Function
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const img = previewArea.querySelector('img');
+      if (img) {
+        const link = document.createElement('a');
+        link.download = 'AdSnap-Banner.png';
+        link.href = img.src;
+        link.click();
+      } else {
+        alert("No banner to download!");
+      }
+    });
+  </script>
 </body>
 </html>
 
