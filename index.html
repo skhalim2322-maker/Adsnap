@@ -264,16 +264,16 @@
 
     <!-- AI Studio Hero Banner -->
     <div class="hero-banner">
-      <div class="ai-badge">✨ Powered by Gemini AI</div>
+      <div class="ai-badge">🚀 Premium AI Edition</div>
       <h1>AdSnap Studio</h1>
       <p>Transform your voice & images into stunning banners</p>
     </div>
 
-    <!-- Hidden Settings Panel for API Key -->
+    <!-- Hidden Settings Panel -->
     <div class="settings-panel" id="settingsPanel">
       <div class="input-group" style="margin-bottom: 0;">
-        <label>Gemini API Key</label>
-        <input type="password" id="apiKey" placeholder="Paste your API Key here">
+        <label>App Access Key</label>
+        <input type="password" id="apiKey" placeholder="Enter Access Key">
       </div>
     </div>
 
@@ -362,7 +362,7 @@
 
     generateBtn.addEventListener('click', () => {
       if(!apiKeyInput.value) {
-        alert("Please set your Gemini API Key in Settings (⚙️) first!");
+        alert("Please enter App Access Key in Settings (⚙️) first!");
         settingsPanel.classList.add('active');
         return;
       }
