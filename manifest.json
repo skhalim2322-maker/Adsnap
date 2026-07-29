@@ -1,16 +1,28 @@
 {
-  "name": "AdSnap AI Studio",
-  "short_name": "AdSnap",
+  "name": "AdSnap AI - Banner Generator",
+  "short_name": "AdSnap AI",
+  "description": "Voice aur image ki madad se stunning HD advertising banners aur social media posts kuch hi seconds me banayein.",
   "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#090d16",
   "theme_color": "#6366f1",
+  "categories": ["productivity", "utilities", "design"],
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/1088/1088537.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1088/1088537.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "AdSnap AI Mobile Interface"
     }
   ]
 }
-
