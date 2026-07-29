@@ -4,19 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AdSnap AI Studio</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #6366f1;
-      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      --card-bg: rgba(255, 255, 255, 0.95);
+      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      --bg-gradient: linear-gradient(135deg, #090d16 0%, #171c30 100%);
+      --card-bg: rgba(20, 24, 38, 0.9);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
 
     * {
       box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
     }
 
     body {
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg-gradient);
       min-height: 100vh;
       margin: 0;
@@ -24,7 +28,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #334155;
+      color: var(--text-main);
     }
 
     .container {
@@ -32,29 +36,89 @@
       width: 100%;
       max-width: 480px;
       padding: 25px;
-      border-radius: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
     }
 
-    .header {
+    .settings-icon {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .settings-icon:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: rotate(45deg);
+    }
+
+    /* Settings Panel */
+    .settings-panel {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 14px;
+      padding: 0 16px;
+    }
+
+    .settings-panel.active {
+      max-height: 120px;
+      opacity: 1;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
       text-align: center;
       margin-bottom: 25px;
+      padding-top: 10px;
     }
 
-    .header h1 {
+    .ai-badge {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .hero-banner h1 {
       margin: 0;
       font-size: 26px;
-      background: linear-gradient(to right, #6366f1, #a855f7);
+      background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-weight: 800;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
-    .header p {
-      margin: 5px 0 0;
+    .hero-banner p {
+      margin: 6px 0 0;
       font-size: 13px;
-      color: #64748b;
+      color: var(--text-muted);
     }
 
     .input-group {
@@ -63,27 +127,46 @@
 
     .input-group label {
       display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #475569;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
     }
 
-    input[type="text"], select, input[type="file"] {
+    input[type="password"], select, input[type="file"] {
       width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
+      padding: 13px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
       font-size: 14px;
       transition: all 0.3s ease;
-      background: #f8fafc;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
     }
 
-    input[type="text"]:focus, select:focus {
+    input[type="password"]:focus, select:focus {
       outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-      background: #fff;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    select option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    input[type="file"]::file-selector-button {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      margin-right: 10px;
+      transition: background 0.2s;
     }
 
     .btn-grid {
@@ -93,56 +176,59 @@
       margin-bottom: 18px;
     }
 
-    button {
-      padding: 12px;
+    button.action-btn {
+      padding: 13px;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       font-weight: 600;
       font-size: 14px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
     }
 
-    button:active {
-      transform: scale(0.97);
+    button.action-btn:active {
+      transform: scale(0.96);
     }
 
     .btn-speak {
-      background: #ef4444;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       color: white;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
     }
 
     .btn-generate {
-      background: #10b981;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     }
 
     .status-box {
       text-align: center;
       font-size: 13px;
-      font-weight: 600;
-      color: #64748b;
-      margin-bottom: 15px;
+      font-weight: 500;
+      color: #38bdf8;
+      margin-bottom: 16px;
+      background: rgba(56, 189, 248, 0.08);
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.15);
     }
 
     .preview-area {
       width: 100%;
-      height: 280px;
-      border: 2px dashed #cbd5e1;
-      border-radius: 14px;
+      height: 260px;
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f8fafc;
+      background: rgba(255, 255, 255, 0.02);
       margin-bottom: 20px;
       overflow: hidden;
-      position: relative;
     }
 
     .preview-area img {
@@ -153,25 +239,42 @@
 
     .btn-download {
       width: 100%;
-      background: #3b82f6;
+      background: var(--primary-gradient);
       color: white;
       padding: 14px;
       font-size: 15px;
-      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+      border: none;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+      transition: opacity 0.2s;
+    }
+
+    .btn-download:hover {
+      opacity: 0.9;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="header">
-      <h1>✨ AdSnap AI Studio</h1>
-      <p>Create Professional Banners in Seconds</p>
+    <!-- Settings Button -->
+    <button class="settings-icon" id="settingsToggle" title="Settings">⚙️</button>
+
+    <!-- AI Studio Hero Banner -->
+    <div class="hero-banner">
+      <div class="ai-badge">✨ Powered by Gemini AI</div>
+      <h1>AdSnap Studio</h1>
+      <p>Transform your voice & images into stunning banners</p>
     </div>
 
-    <div class="input-group">
-      <label>Gemini API Key</label>
-      <input type="text" id="apiKey" placeholder="Paste your Gemini API Key here">
+    <!-- Hidden Settings Panel for API Key -->
+    <div class="settings-panel" id="settingsPanel">
+      <div class="input-group" style="margin-bottom: 0;">
+        <label>Gemini API Key</label>
+        <input type="password" id="apiKey" placeholder="Paste your API Key here">
+      </div>
     </div>
 
     <div class="input-group">
@@ -189,21 +292,26 @@
     </div>
 
     <div class="btn-grid">
-      <button class="btn-speak" id="speakBtn">🎙️ Speak Offer</button>
-      <button class="btn-generate" id="generateBtn">✨ Generate</button>
+      <button class="action-btn btn-speak" id="speakBtn">🎙️ Speak Offer</button>
+      <button class="action-btn btn-generate" id="generateBtn">✨ Generate</button>
     </div>
 
     <div class="status-box" id="statusBox">Status: Ready</div>
 
     <div class="preview-area" id="previewArea">
-      <span style="color: #94a3b8; font-size: 13px;">Banner Preview Area</span>
+      <span style="color: var(--text-muted); font-size: 13px;">Banner Preview Area</span>
     </div>
 
     <button class="btn-download" id="downloadBtn">📥 Download HD Banner</button>
   </div>
 
   <script>
-    // Logic & Integration
+    const settingsToggle = document.getElementById('settingsToggle');
+    const settingsPanel = document.getElementById('settingsPanel');
+    settingsToggle.addEventListener('click', () => {
+      settingsPanel.classList.toggle('active');
+    });
+
     const apiKeyInput = document.getElementById('apiKey');
     const speakBtn = document.getElementById('speakBtn');
     const generateBtn = document.getElementById('generateBtn');
@@ -212,7 +320,6 @@
     const previewArea = document.getElementById('previewArea');
     let spokenText = "";
 
-    // Load API Key from local storage
     if(localStorage.getItem('gemini_api_key')){
       apiKeyInput.value = localStorage.getItem('gemini_api_key');
     }
@@ -221,7 +328,6 @@
       localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
     });
 
-    // Speech Recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
@@ -229,50 +335,43 @@
         recognition.lang = document.getElementById('language').value;
         recognition.start();
         statusBox.innerText = "Status: Listening...";
-        statusBox.style.color = "#ef4444";
       });
 
       recognition.onresult = (event) => {
         spokenText = event.results[0][0].transcript;
         statusBox.innerText = `Status: Captured "${spokenText}"`;
-        statusBox.style.color = "#10b981";
       };
 
       recognition.onerror = () => {
         statusBox.innerText = "Status: Voice error, try again.";
-        statusBox.style.color = "#ef4444";
       };
     } else {
-      speakBtn.onclick = () => alert("Speech recognition is not supported in this browser.");
+      speakBtn.onclick = () => alert("Speech recognition is not supported.");
     }
 
-    // Image Upload Preview
     imageInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (event) => {
-          previewArea.innerHTML = `<img src="${event.target.result}" id="bannerImg" />`;
+          previewArea.innerHTML = `<img src="${event.target.result}" />`;
         };
         reader.readAsDataURL(file);
       }
     });
 
-    // Generate Button Click
     generateBtn.addEventListener('click', () => {
       if(!apiKeyInput.value) {
-        alert("Please enter Gemini API Key first!");
+        alert("Please set your Gemini API Key in Settings (⚙️) first!");
+        settingsPanel.classList.add('active');
         return;
       }
       statusBox.innerText = "Status: Generating Banner...";
-      statusBox.style.color = "#6366f1";
       setTimeout(() => {
         statusBox.innerText = "Status: Banner Generated!";
-        statusBox.style.color = "#10b981";
       }, 1500);
     });
 
-    // Download Function
     document.getElementById('downloadBtn').addEventListener('click', () => {
       const img = previewArea.querySelector('img');
       if (img) {
@@ -287,4 +386,3 @@
   </script>
 </body>
 </html>
-
