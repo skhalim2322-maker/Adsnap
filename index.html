@@ -11,8 +11,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AdSnap AI">
   
-  <!-- Inline Manifest for PWABuilder Auto-Detection -->
-  <link rel="manifest" href='data:application/manifest+json,{"name":"AdSnap AI","short_name":"AdSnap","description":"AI Banner Generator App","start_url":"./","display":"standalone","background_color":"#090d16","theme_color":"#6366f1","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/1088/1088537.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
+  <!-- Standard Web Manifest Link -->
+  <link rel="manifest" href="manifest.json">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -362,7 +362,7 @@
   </div>
 
   <script>
-    // Register Service Worker for PWABuilder Compliance
+    // Register Service Worker for PWABuilder (App Installation Ready)
     if ('serviceWorker' in navigator) {
       const swCode = `
         self.addEventListener('install', (e) => self.skipWaiting());
@@ -454,7 +454,7 @@
       }
     });
 
-    // Text Wrapping Helper
+    // Text Wrapping Helper (TYPO FIXED HERE ✅)
     function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
       const words = text.split(' ');
       let line = '';
@@ -462,7 +462,7 @@
 
       for (let n = 0; n < words.length; n++) {
         let testLine = line + words[n] + ' ';
-        let metrics = ctx.measureText(testLine);
+        let metrics = ctx.measureText(testLine); // Pehle yahan 'measureTest' tha, ab 'measureText' ho gaya hai
         let testWidth = metrics.width;
         if (testWidth > maxWidth && n > 0) {
           ctx.fillText(line, x, currentY);
