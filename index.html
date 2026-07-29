@@ -362,7 +362,6 @@
   </div>
 
   <script>
-    // Register Service Worker for PWABuilder (App Installation Ready)
     if ('serviceWorker' in navigator) {
       const swCode = `
         self.addEventListener('install', (e) => self.skipWaiting());
@@ -400,14 +399,12 @@
       localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
     });
 
-    // Enter Key Trigger
     offerTextInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         generateBtn.click();
       }
     });
 
-    // Speech Recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
@@ -437,7 +434,6 @@
       speakBtn.onclick = () => alert("Aapke browser me voice input support nahi hai.");
     }
 
-    // Image Upload
     imageInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -454,7 +450,6 @@
       }
     });
 
-    // Text Wrapping Helper (TYPO FIXED HERE ✅)
     function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
       const words = text.split(' ');
       let line = '';
@@ -462,7 +457,7 @@
 
       for (let n = 0; n < words.length; n++) {
         let testLine = line + words[n] + ' ';
-        let metrics = ctx.measureText(testLine); // Pehle yahan 'measureTest' tha, ab 'measureText' ho gaya hai
+        let metrics = ctx.measureText(testLine);
         let testWidth = metrics.width;
         if (testWidth > maxWidth && n > 0) {
           ctx.fillText(line, x, currentY);
@@ -475,19 +470,16 @@
       ctx.fillText(line, x, currentY);
     }
 
-    // Canvas Engine
     function renderBanner() {
       canvas.width = 600;
       canvas.height = 600;
 
-      // Gradient Background
       const grad = ctx.createLinearGradient(0, 0, 600, 600);
       grad.addColorStop(0, '#0f172a');
       grad.addColorStop(1, '#1e1b4b');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 600, 600);
 
-      // Product Image
       if (uploadedImage) {
         const hRatio = 380 / uploadedImage.width;
         const vRatio = 380 / uploadedImage.height;
@@ -499,11 +491,9 @@
                       centerShift_x, centerShift_y, uploadedImage.width * ratio, uploadedImage.height * ratio);
       }
 
-      // Offer Overlay
       ctx.fillStyle = 'rgba(99, 102, 241, 0.95)';
       ctx.fillRect(0, 450, 600, 150);
 
-      // Render Text
       const offerText = offerTextInput.value.trim() || "SPECIAL OFFER";
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 26px Poppins, sans-serif';
