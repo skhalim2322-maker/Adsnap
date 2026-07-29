@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -11,8 +11,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AdSnap AI">
   
-  <!-- Inline Manifest -->
-  <link rel="manifest" href='data:application/manifest+json,{"name":"AdSnap AI","short_name":"AdSnap","start_url":"./","display":"standalone","background_color":"#090d16","theme_color":"#6366f1","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/1088/1088537.png","sizes":"512x512","type":"image/png"}]}'>
+  <!-- Inline Manifest for PWABuilder Auto-Detection -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"AdSnap AI","short_name":"AdSnap","description":"AI Banner Generator App","start_url":"./","display":"standalone","background_color":"#090d16","theme_color":"#6366f1","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/1088/1088537.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -160,7 +160,7 @@
       color: #fff;
     }
 
-    /* Gemini-Style Smart Prompt Bar */
+    /* Smart Prompt Bar */
     .smart-prompt-box {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -191,11 +191,22 @@
       cursor: pointer;
       font-size: 16px;
       flex-shrink: 0;
-      transition: background 0.2s;
+      transition: all 0.2s;
     }
 
     .prompt-icon-btn:hover {
       background: rgba(255, 255, 255, 0.2);
+    }
+
+    .listening-active {
+      background: rgba(239, 68, 68, 0.8) !important;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
 
     .prompt-input {
@@ -225,6 +236,11 @@
       font-size: 16px;
       flex-shrink: 0;
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .btn-send:active {
+      transform: scale(0.92);
     }
 
     .image-preview-badge {
@@ -254,7 +270,7 @@
 
     .preview-area {
       width: 100%;
-      height: 250px;
+      height: 260px;
       border: 2px dashed rgba(255, 255, 255, 0.15);
       border-radius: 16px;
       display: flex;
@@ -300,7 +316,7 @@
     <div class="hero-banner">
       <div class="ai-badge">🚀 Premium AI Edition</div>
       <h1>AdSnap AI</h1>
-      <p>Transform voice & images into banners</p>
+      <p>Voice aur image se banao HD banner</p>
     </div>
 
     <div class="settings-panel" id="settingsPanel">
@@ -311,39 +327,34 @@
     </div>
 
     <div class="input-group">
-      <label>Voice Language</label>
+      <label>Voice Language Select Karo</label>
       <select id="language">
-        <option value="hi-IN">Hindi (हिंदी)</option>
+        <option value="hi-IN">Hindi</option>
         <option value="en-US">English</option>
-        <option value="bn-IN">Bengali (বাংলা)</option>
+        <option value="bn-IN">Bengali</option>
       </select>
     </div>
 
-    <!-- Image Attachment Indicator -->
+    <!-- Image Attachment Badge -->
     <div class="image-preview-badge" id="imageBadge">
-      📷 <span>Image Attached</span>
+      📷 <span>Photo Select Ho Gayi</span>
     </div>
 
-    <!-- Gemini Style Smart Prompt Bar -->
+    <!-- Smart Prompt Bar -->
     <div class="smart-prompt-box">
-      <!-- Plus Icon (Upload File) -->
-      <label for="imageInput" class="prompt-icon-btn" title="Upload Image">➕</label>
+      <label for="imageInput" class="prompt-icon-btn" title="Photo Add Karo">➕</label>
       <input type="file" id="imageInput" accept="image/*" style="display:none;">
 
-      <!-- Text Input -->
-      <input type="text" class="prompt-input" id="offerTextInput" placeholder="Type or speak offer...">
+      <input type="text" class="prompt-input" id="offerTextInput" placeholder="Offer likho ya bolo...">
 
-      <!-- Mic Icon -->
-      <button class="prompt-icon-btn" id="speakBtn" title="Speak Offer">🎙️</button>
-
-      <!-- Send / Generate Arrow Button -->
-      <button class="btn-send" id="generateBtn" title="Generate Banner">➔</button>
+      <button class="prompt-icon-btn" id="speakBtn" title="Bolo Offer">🎙️</button>
+      <button class="btn-send" id="generateBtn" title="Banner Banayein">➔</button>
     </div>
 
-    <div class="status-box" id="statusBox">Status: Ready</div>
+    <div class="status-box" id="statusBox">Status: Ready Hai</div>
 
     <div class="preview-area" id="previewArea">
-      <span style="color: var(--text-muted); font-size: 13px;" id="placeholderText">Banner Preview Area</span>
+      <span style="color: var(--text-muted); font-size: 13px;" id="placeholderText">Banner Yahan Dikhega</span>
       <canvas id="bannerCanvas" style="display:none;"></canvas>
     </div>
 
@@ -351,6 +362,17 @@
   </div>
 
   <script>
+    // Register Service Worker for PWABuilder Compliance
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        self.addEventListener('install', (e) => self.skipWaiting());
+        self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));
+      `;
+      const blob = new Blob([swCode], { type: 'text/javascript' });
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    }
+
     const settingsToggle = document.getElementById('settingsToggle');
     const settingsPanel = document.getElementById('settingsPanel');
     settingsToggle.addEventListener('click', () => {
@@ -378,6 +400,13 @@
       localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
     });
 
+    // Enter Key Trigger
+    offerTextInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        generateBtn.click();
+      }
+    });
+
     // Speech Recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -385,23 +414,27 @@
       speakBtn.addEventListener('click', () => {
         recognition.lang = document.getElementById('language').value;
         recognition.start();
-        statusBox.innerText = "Status: Listening...";
-        speakBtn.style.background = "rgba(239, 68, 68, 0.4)";
+        statusBox.innerText = "Status: Sun raha hoon...";
+        speakBtn.classList.add('listening-active');
       });
 
       recognition.onresult = (event) => {
         const text = event.results[0][0].transcript;
         offerTextInput.value = text;
-        statusBox.innerText = `Status: Captured "${text}"`;
-        speakBtn.style.background = "rgba(255, 255, 255, 0.1)";
+        statusBox.innerText = `Status: Samajh gaya "${text}"`;
+        speakBtn.classList.remove('listening-active');
       };
 
       recognition.onerror = () => {
-        statusBox.innerText = "Status: Voice error, try typing.";
-        speakBtn.style.background = "rgba(255, 255, 255, 0.1)";
+        statusBox.innerText = "Status: Voice error, type kar lo.";
+        speakBtn.classList.remove('listening-active');
+      };
+
+      recognition.onend = () => {
+        speakBtn.classList.remove('listening-active');
       };
     } else {
-      speakBtn.onclick = () => alert("Voice input not supported on this browser.");
+      speakBtn.onclick = () => alert("Aapke browser me voice input support nahi hai.");
     }
 
     // Image Upload
@@ -413,7 +446,7 @@
           uploadedImage = new Image();
           uploadedImage.onload = () => {
             imageBadge.style.display = 'inline-flex';
-            statusBox.innerText = "Status: Image Attached";
+            statusBox.innerText = "Status: Photo Add Ho Gayi";
           };
           uploadedImage.src = event.target.result;
         };
@@ -421,36 +454,62 @@
       }
     });
 
-    // Render Canvas
+    // Text Wrapping Helper
+    function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      let currentY = y;
+
+      for (let n = 0; n < words.length; n++) {
+        let testLine = line + words[n] + ' ';
+        let metrics = ctx.measureText(testLine);
+        let testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+          ctx.fillText(line, x, currentY);
+          line = words[n] + ' ';
+          currentY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, currentY);
+    }
+
+    // Canvas Engine
     function renderBanner() {
       canvas.width = 600;
       canvas.height = 600;
 
+      // Gradient Background
       const grad = ctx.createLinearGradient(0, 0, 600, 600);
       grad.addColorStop(0, '#0f172a');
       grad.addColorStop(1, '#1e1b4b');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 600, 600);
 
+      // Product Image
       if (uploadedImage) {
         const hRatio = 380 / uploadedImage.width;
         const vRatio = 380 / uploadedImage.height;
         const ratio = Math.min(hRatio, vRatio);
         const centerShift_x = (600 - uploadedImage.width * ratio) / 2;
-        const centerShift_y = (380 - uploadedImage.height * ratio) / 2 + 20;
+        const centerShift_y = (380 - uploadedImage.height * ratio) / 2 + 15;
 
         ctx.drawImage(uploadedImage, 0, 0, uploadedImage.width, uploadedImage.height,
                       centerShift_x, centerShift_y, uploadedImage.width * ratio, uploadedImage.height * ratio);
       }
 
-      ctx.fillStyle = 'rgba(99, 102, 241, 0.9)';
-      ctx.fillRect(0, 460, 600, 140);
+      // Offer Overlay
+      ctx.fillStyle = 'rgba(99, 102, 241, 0.95)';
+      ctx.fillRect(0, 450, 600, 150);
 
+      // Render Text
       const offerText = offerTextInput.value.trim() || "SPECIAL OFFER";
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 28px Poppins, sans-serif';
+      ctx.font = 'bold 26px Poppins, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(offerText, 300, 530);
+      
+      drawWrappedText(ctx, offerText, 300, 510, 540, 32);
 
       placeholderText.style.display = 'none';
       canvas.style.display = 'block';
@@ -458,15 +517,15 @@
 
     generateBtn.addEventListener('click', () => {
       if(!apiKeyInput.value) {
-        alert("Please enter App Access Key in Settings (⚙️) first!");
+        alert("Pehle Settings (⚙️) me Access Key daalo!");
         settingsPanel.classList.add('active');
         return;
       }
-      statusBox.innerText = "Status: Generating Banner...";
+      statusBox.innerText = "Status: Banner Ban Raha Hai...";
       setTimeout(() => {
         renderBanner();
-        statusBox.innerText = "Status: Banner Ready!";
-      }, 800);
+        statusBox.innerText = "Status: Banner Taiyar Hai!";
+      }, 600);
     });
 
     document.getElementById('downloadBtn').addEventListener('click', () => {
@@ -476,7 +535,7 @@
         link.href = canvas.toDataURL('image/png');
         link.click();
       } else {
-        alert("Please attach image or enter offer & click ➔ first!");
+        alert("Pehle photo upload karo ya text likh kar ➔ click karo!");
       }
     });
   </script>
