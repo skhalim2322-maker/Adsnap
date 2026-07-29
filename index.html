@@ -2,10 +2,21 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AdSnap AI Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AdSnap AI</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#090d16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AdSnap AI">
+  
+  <!-- Inline Manifest -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"AdSnap AI","short_name":"AdSnap","start_url":"./","display":"standalone","background_color":"#090d16","theme_color":"#6366f1","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/1088/1088537.png","sizes":"512x512","type":"image/png"}]}'>
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
       --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
@@ -18,6 +29,7 @@
     * {
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -58,6 +70,7 @@
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
+      color: #fff;
     }
 
     .settings-icon:hover {
@@ -65,7 +78,6 @@
       transform: rotate(45deg);
     }
 
-    /* Settings Panel */
     .settings-panel {
       max-height: 0;
       overflow: hidden;
@@ -84,10 +96,9 @@
       margin-bottom: 20px;
     }
 
-    /* Hero Banner */
     .hero-banner {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       padding-top: 10px;
     }
 
@@ -99,7 +110,7 @@
       font-weight: 600;
       padding: 6px 14px;
       border-radius: 20px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       border: 1px solid rgba(99, 102, 241, 0.3);
       letter-spacing: 0.5px;
       text-transform: uppercase;
@@ -122,34 +133,26 @@
     }
 
     .input-group {
-      margin-bottom: 18px;
+      margin-bottom: 15px;
     }
 
     .input-group label {
       display: block;
       font-size: 12px;
       font-weight: 500;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: var(--text-muted);
       letter-spacing: 0.3px;
     }
 
-    input[type="password"], select, input[type="file"] {
+    input[type="password"], select {
       width: 100%;
-      padding: 13px 16px;
+      padding: 12px 16px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 14px;
       font-size: 14px;
-      transition: all 0.3s ease;
       background: rgba(255, 255, 255, 0.05);
       color: #fff;
-    }
-
-    input[type="password"]:focus, select:focus {
-      outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-      background: rgba(255, 255, 255, 0.08);
     }
 
     select option {
@@ -157,58 +160,89 @@
       color: #fff;
     }
 
-    input[type="file"]::file-selector-button {
-      background: rgba(99, 102, 241, 0.2);
-      color: #818cf8;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      margin-right: 10px;
-      transition: background 0.2s;
-    }
-
-    .btn-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    /* Gemini-Style Smart Prompt Bar */
+    .smart-prompt-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 18px;
+      transition: border-color 0.3s;
     }
 
-    button.action-btn {
-      padding: 13px;
+    .smart-prompt-box:focus-within {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .prompt-icon-btn {
+      background: rgba(255, 255, 255, 0.1);
       border: none;
-      border-radius: 14px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
+      color: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      flex-shrink: 0;
+      transition: background 0.2s;
     }
 
-    button.action-btn:active {
-      transform: scale(0.96);
+    .prompt-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
 
-    .btn-speak {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    .prompt-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .prompt-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn-send {
+      background: var(--primary-gradient);
       color: white;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
     }
 
-    .btn-generate {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    .image-preview-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      color: #818cf8;
+      margin-bottom: 10px;
     }
 
     .status-box {
       text-align: center;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       color: #38bdf8;
       margin-bottom: 16px;
@@ -220,7 +254,7 @@
 
     .preview-area {
       width: 100%;
-      height: 260px;
+      height: 250px;
       border: 2px dashed rgba(255, 255, 255, 0.15);
       border-radius: 16px;
       display: flex;
@@ -229,12 +263,14 @@
       background: rgba(255, 255, 255, 0.02);
       margin-bottom: 20px;
       overflow: hidden;
+      position: relative;
     }
 
-    .preview-area img {
+    canvas {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
+      border-radius: 8px;
     }
 
     .btn-download {
@@ -259,17 +295,14 @@
 <body>
 
   <div class="container">
-    <!-- Settings Button -->
     <button class="settings-icon" id="settingsToggle" title="Settings">⚙️</button>
 
-    <!-- AI Studio Hero Banner -->
     <div class="hero-banner">
       <div class="ai-badge">🚀 Premium AI Edition</div>
-      <h1>AdSnap Studio</h1>
-      <p>Transform your voice & images into stunning banners</p>
+      <h1>AdSnap AI</h1>
+      <p>Transform voice & images into banners</p>
     </div>
 
-    <!-- Hidden Settings Panel -->
     <div class="settings-panel" id="settingsPanel">
       <div class="input-group" style="margin-bottom: 0;">
         <label>App Access Key</label>
@@ -286,20 +319,32 @@
       </select>
     </div>
 
-    <div class="input-group">
-      <label>Upload Product Image</label>
-      <input type="file" id="imageInput" accept="image/*">
+    <!-- Image Attachment Indicator -->
+    <div class="image-preview-badge" id="imageBadge">
+      📷 <span>Image Attached</span>
     </div>
 
-    <div class="btn-grid">
-      <button class="action-btn btn-speak" id="speakBtn">🎙️ Speak Offer</button>
-      <button class="action-btn btn-generate" id="generateBtn">✨ Generate</button>
+    <!-- Gemini Style Smart Prompt Bar -->
+    <div class="smart-prompt-box">
+      <!-- Plus Icon (Upload File) -->
+      <label for="imageInput" class="prompt-icon-btn" title="Upload Image">➕</label>
+      <input type="file" id="imageInput" accept="image/*" style="display:none;">
+
+      <!-- Text Input -->
+      <input type="text" class="prompt-input" id="offerTextInput" placeholder="Type or speak offer...">
+
+      <!-- Mic Icon -->
+      <button class="prompt-icon-btn" id="speakBtn" title="Speak Offer">🎙️</button>
+
+      <!-- Send / Generate Arrow Button -->
+      <button class="btn-send" id="generateBtn" title="Generate Banner">➔</button>
     </div>
 
     <div class="status-box" id="statusBox">Status: Ready</div>
 
     <div class="preview-area" id="previewArea">
-      <span style="color: var(--text-muted); font-size: 13px;">Banner Preview Area</span>
+      <span style="color: var(--text-muted); font-size: 13px;" id="placeholderText">Banner Preview Area</span>
+      <canvas id="bannerCanvas" style="display:none;"></canvas>
     </div>
 
     <button class="btn-download" id="downloadBtn">📥 Download HD Banner</button>
@@ -317,8 +362,13 @@
     const generateBtn = document.getElementById('generateBtn');
     const statusBox = document.getElementById('statusBox');
     const imageInput = document.getElementById('imageInput');
-    const previewArea = document.getElementById('previewArea');
-    let spokenText = "";
+    const imageBadge = document.getElementById('imageBadge');
+    const offerTextInput = document.getElementById('offerTextInput');
+    const canvas = document.getElementById('bannerCanvas');
+    const ctx = canvas.getContext('2d');
+    const placeholderText = document.getElementById('placeholderText');
+    
+    let uploadedImage = null;
 
     if(localStorage.getItem('gemini_api_key')){
       apiKeyInput.value = localStorage.getItem('gemini_api_key');
@@ -328,6 +378,7 @@
       localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
     });
 
+    // Speech Recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
@@ -335,30 +386,75 @@
         recognition.lang = document.getElementById('language').value;
         recognition.start();
         statusBox.innerText = "Status: Listening...";
+        speakBtn.style.background = "rgba(239, 68, 68, 0.4)";
       });
 
       recognition.onresult = (event) => {
-        spokenText = event.results[0][0].transcript;
-        statusBox.innerText = `Status: Captured "${spokenText}"`;
+        const text = event.results[0][0].transcript;
+        offerTextInput.value = text;
+        statusBox.innerText = `Status: Captured "${text}"`;
+        speakBtn.style.background = "rgba(255, 255, 255, 0.1)";
       };
 
       recognition.onerror = () => {
-        statusBox.innerText = "Status: Voice error, try again.";
+        statusBox.innerText = "Status: Voice error, try typing.";
+        speakBtn.style.background = "rgba(255, 255, 255, 0.1)";
       };
     } else {
-      speakBtn.onclick = () => alert("Speech recognition is not supported.");
+      speakBtn.onclick = () => alert("Voice input not supported on this browser.");
     }
 
+    // Image Upload
     imageInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (event) => {
-          previewArea.innerHTML = `<img src="${event.target.result}" />`;
+          uploadedImage = new Image();
+          uploadedImage.onload = () => {
+            imageBadge.style.display = 'inline-flex';
+            statusBox.innerText = "Status: Image Attached";
+          };
+          uploadedImage.src = event.target.result;
         };
         reader.readAsDataURL(file);
       }
     });
+
+    // Render Canvas
+    function renderBanner() {
+      canvas.width = 600;
+      canvas.height = 600;
+
+      const grad = ctx.createLinearGradient(0, 0, 600, 600);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 600, 600);
+
+      if (uploadedImage) {
+        const hRatio = 380 / uploadedImage.width;
+        const vRatio = 380 / uploadedImage.height;
+        const ratio = Math.min(hRatio, vRatio);
+        const centerShift_x = (600 - uploadedImage.width * ratio) / 2;
+        const centerShift_y = (380 - uploadedImage.height * ratio) / 2 + 20;
+
+        ctx.drawImage(uploadedImage, 0, 0, uploadedImage.width, uploadedImage.height,
+                      centerShift_x, centerShift_y, uploadedImage.width * ratio, uploadedImage.height * ratio);
+      }
+
+      ctx.fillStyle = 'rgba(99, 102, 241, 0.9)';
+      ctx.fillRect(0, 460, 600, 140);
+
+      const offerText = offerTextInput.value.trim() || "SPECIAL OFFER";
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 28px Poppins, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(offerText, 300, 530);
+
+      placeholderText.style.display = 'none';
+      canvas.style.display = 'block';
+    }
 
     generateBtn.addEventListener('click', () => {
       if(!apiKeyInput.value) {
@@ -368,19 +464,19 @@
       }
       statusBox.innerText = "Status: Generating Banner...";
       setTimeout(() => {
-        statusBox.innerText = "Status: Banner Generated!";
-      }, 1500);
+        renderBanner();
+        statusBox.innerText = "Status: Banner Ready!";
+      }, 800);
     });
 
     document.getElementById('downloadBtn').addEventListener('click', () => {
-      const img = previewArea.querySelector('img');
-      if (img) {
+      if (canvas.style.display !== 'none') {
         const link = document.createElement('a');
         link.download = 'AdSnap-Banner.png';
-        link.href = img.src;
+        link.href = canvas.toDataURL('image/png');
         link.click();
       } else {
-        alert("No banner to download!");
+        alert("Please attach image or enter offer & click ➔ first!");
       }
     });
   </script>
